@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Git pre-commit hook: block commits with DBC/ARXML rule violations.
+# Install: cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Or use: pre-commit install  (see .pre-commit-config.yaml)
+
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+STAGED=()
+while IFS= read -r line; do
+  STAGED+=("$line")
+done < <(git diff --cached --name-only --diff-filter=ACMR | grep -E '\.(dbc|arxml|csv|json)$' || true)
+
+if [[ ${#STAGED[@]} -eq 0 ]]; then
+  exit 0
+fi
+
+if command -v auto-validator >/dev/null 2>&1; then
+  VALIDATOR="auto-validator"
+elif [[ -x "$ROOT/.venv/bin/auto-validator" ]]; then
+  VALIDATOR="$ROOT/.venv/bin/auto-validator"
+else
+  echo "auto-validator not found. Install with: pip install -e '.[dev]'" >&2
+  exit 1
+fi
+
+ARGS=(hook-check)
+if [[ -f "$ROOT/configs/default.yaml" ]]; then
+  ARGS+=(--config "$ROOT/configs/default.yaml")
+fi
+ARGS+=("${STAGED[@]}")
+
+exec "$VALIDATOR" "${ARGS[@]}"

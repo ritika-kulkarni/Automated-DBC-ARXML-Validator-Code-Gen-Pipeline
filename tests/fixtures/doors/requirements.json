@@ -1,0 +1,17 @@
+{
+  "requirements": [
+    {
+      "req_id": "REQ-001",
+      "title": "Engine speed signal mapping",
+      "signal_name": "EngineSpeed",
+      "port_name": "Pp_EngineSpeed",
+      "status": "approved"
+    },
+    {
+      "req_id": "REQ-100",
+      "title": "Ghost signal that does not exist",
+      "signal_name": "NonExistentSignal",
+      "status": "approved"
+    }
+  ]
+}

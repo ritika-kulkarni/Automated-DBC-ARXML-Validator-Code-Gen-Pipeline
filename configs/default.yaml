@@ -1,0 +1,55 @@
+# Default pipeline configuration for DBC/ARXML Validator & Code-Gen
+
+pipeline:
+  fail_on_severity: error   # error | warning | info
+  parallel: false
+  max_retries: 3
+  retry_backoff_seconds: 1.0
+
+logging:
+  level: INFO               # DEBUG | INFO | WARNING | ERROR
+  format: structured        # structured | plain
+  file: null                # optional path, e.g. logs/pipeline.log
+
+dbc:
+  enabled: true
+  rules:
+    overlapping_signals: true
+    endianness_conflicts: true
+    missing_initial_values: true
+    cycle_time_mismatch: true
+    j1939_compliance: true
+    can_fd_limits: true
+  # Allowed cycle-time tolerance (ms) when comparing GenMsgCycleTime vs expected
+  cycle_time_tolerance_ms: 0
+  # Max payload for classic CAN / CAN-FD
+  classic_can_max_dlc: 8
+  can_fd_max_dlc: 64
+  # Require initial values (SIG_VALTYPE / GenSigStartValue)
+  require_initial_values: true
+
+arxml:
+  enabled: true
+  rules:
+    port_consistency: true
+    interface_completeness: true
+    data_type_mapping: true
+  generate_c_stubs: true
+  generate_rte_mappings: true
+  output_dir: output/codegen
+
+requirements:
+  enabled: true
+  # Match ARXML ports / DBC signals against DOORS exports
+  match_mode: strict        # strict | fuzzy
+  fuzzy_threshold: 0.85
+  id_column: req_id
+  signal_column: signal_name
+  port_column: port_name
+
+report:
+  formats:
+    - console
+    - json
+    - junit
+  output_dir: output/reports

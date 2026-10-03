@@ -1,0 +1,17 @@
+VERSION "1.0"
+
+NS_ :
+BS_:
+BU_: ECM
+
+BO_ 100 BadMsg: 8 ECM
+ SG_ SignalA : 0|16@1+ (1,0) [0|65535] "" Vector__XXX
+ SG_ SignalB : 8|16@1+ (1,0) [0|65535] "" Vector__XXX
+
+BA_DEF_ BO_  "GenMsgCycleTime" INT 0 10000;
+BA_DEF_ SG_  "GenSigStartValue" FLOAT 0 100000;
+BA_DEF_DEF_  "GenMsgCycleTime" 0;
+BA_DEF_DEF_  "GenSigStartValue" 0;
+BA_ "GenMsgCycleTime" BO_ 100 10;
+BA_ "GenSigStartValue" SG_ 100 SignalA 0;
+BA_ "GenSigStartValue" SG_ 100 SignalB 0;

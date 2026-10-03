@@ -1,0 +1,8 @@
+req_id,title,signal_name,port_name,message_name,status
+REQ-001,Engine speed signal mapping,EngineSpeed,Pp_EngineSpeed,EngineData,approved
+REQ-002,Engine temperature mapping,EngineTemp,,EngineData,approved
+REQ-003,Oil pressure mapping,OilPressure,,EngineData,approved
+REQ-004,Wheel speed FL,WheelSpeedFL,,VehicleSpeed,approved
+REQ-005,Wheel speed FR,WheelSpeedFR,,VehicleSpeed,approved
+REQ-006,Vehicle speed port,,Rp_VehicleSpeed,,approved
+REQ-007,Diag port,,Rp_Diag,,approved

@@ -1,31 +1,29 @@
 # Parsers
 
-Convert on-disk automotive artifacts into normalized domain models. All parsers use `@retryable` for transient I/O failures.
+Turn files on disk into models. All three use `@retryable` for flaky I/O.
 
 ## Components
 
-| Class | File | Input | Output |
-|-------|------|-------|--------|
+| Class | File | In | Out |
+|-------|------|----|-----|
 | `DbcParser` | `dbc_parser.py` | `.dbc` | `CanNetwork` |
-| `ArxmlParser` | `arxml_parser.py` | `.arxml` / `.xml` | `ArxmlModel` |
-| `DoorsParser` | `doors_parser.py` | `.csv` / `.tsv` / `.json` | `RequirementsCatalog` |
+| `ArxmlParser` | `arxml_parser.py` | `.arxml` | `ArxmlModel` |
+| `DoorsParser` | `doors_parser.py` | `.csv` / `.json` | `RequirementsCatalog` |
 
-## DBC (`DbcParser`)
+```mermaid
+flowchart LR
+    DBC[.dbc] --> DP[DbcParser]
+    ARX[.arxml] --> AP[ArxmlParser]
+    CSV[DOORS] --> DOP[DoorsParser]
+    DP --> CN[CanNetwork]
+    AP --> AM[ArxmlModel]
+    DOP --> RC[RequirementsCatalog]
+```
 
-- Backend: **cantools** (`strict=False` for industrial DBC quirks)
-- Extracts cycle time, signal start values, FD/J1939 flags
-- `parse_files()` merges multiple networks
+## Notes
 
-## ARXML (`ArxmlParser`)
+- **DBC** — cantools, `strict=False`; merges multiple files via `parse_files()`.
+- **ARXML** — lxml, AUTOSAR 4.x-ish; SWCs, P/R/PR ports, S/R + C/S interfaces only (not a full Tresos parser).
+- **DOORS** — column names configurable; common aliases accepted.
 
-- Backend: **lxml** (namespace-tolerant AUTOSAR 4.x)
-- Extracts SWCs, P/R/PR ports, S/R and C/S interfaces, init values
-- No Tresos dependency — subset needed for validation + stub codegen
-
-## DOORS (`DoorsParser`)
-
-- Configurable column names via `RequirementsConfig`
-- Alias-friendly (`object_id`, `can_signal`, `autosar_port`, …)
-- JSON root may be a list or `{ "requirements": [...] }`
-
-See also: [`../../../docs/FEATURES.md`](../../../docs/FEATURES.md) §§2, 4, 6.
+Docs: [DATA_FLOW.md](../../../docs/DATA_FLOW.md), [FEATURES.md](../../../docs/FEATURES.md).

@@ -1,10 +1,8 @@
 # Pipeline
 
-Wires parsers → validators → matcher → codegen → reports.
+Runs parse → validate → match → codegen → report.
 
 ## `PipelineOrchestrator`
-
-Public API:
 
 ```python
 from auto_validator.config import load_config
@@ -15,19 +13,22 @@ report = orch.run(
     dbc_files=["network.dbc"],
     arxml_files=["swc.arxml"],
     requirements_files=["doors.csv"],
-    expected_cycle_times={"EngineData": 10},
-    skip_codegen=False,
 )
-assert report.overall_passed
+print(report.overall_passed, report.total_errors)
 ```
 
 ## Stage order
 
-1. DBC parse + `DbcValidationEngine`  
-2. ARXML parse + `ArxmlPortValidator`  
-3. DOORS parse + `RequirementsMatcher`  
-4. Codegen (gated on clean ARXML)  
-5. Severity threshold → `overall_passed`  
-6. `ReportWriter.write(report)`
+```mermaid
+flowchart LR
+    A[DBC] --> B[ARXML] --> C[DOORS] --> D[Codegen] --> E[Reports]
+```
 
-See [`../../../docs/FEATURES.md`](../../../docs/FEATURES.md) §1.
+| Stage | Skip when |
+|-------|-----------|
+| DBC | no `--dbc` or `dbc.enabled: false` |
+| ARXML | no `--arxml` or `arxml.enabled: false` |
+| DOORS | no `--requirements` or `requirements.enabled: false` |
+| Codegen | `--skip-codegen`, no ARXML, or ARXML errors |
+
+See [ARCHITECTURE.md](../../../docs/ARCHITECTURE.md) and [DATA_FLOW.md](../../../docs/DATA_FLOW.md).

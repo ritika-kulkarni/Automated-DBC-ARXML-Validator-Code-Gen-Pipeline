@@ -1,48 +1,38 @@
 # Validators
 
-Rule engines that produce `Finding` lists. All validators share `BaseValidator[T]` (template method: time, catch, aggregate).
+Rule engines that emit `Finding` objects. Shared base: `BaseValidator.run()`.
 
-## Structure
+## Layout
 
 ```text
 validators/
-├── base.py                 # BaseValidator[T]
-├── dbc/
-│   ├── engine.py           # DbcValidationEngine (composite)
-│   ├── overlapping_signals.py
-│   ├── endianness.py
-│   ├── initial_values.py
-│   ├── cycle_times.py
-│   ├── j1939_rules.py
-│   └── can_fd_limits.py
-└── arxml/
-    └── port_consistency.py # ArxmlPortValidator
+├── base.py
+├── dbc/          # overlapping, endian, init, cycle, J1939, CAN-FD + engine
+└── arxml/        # port / interface consistency
 ```
 
-## DBC engine
+```mermaid
+flowchart TB
+    BV[BaseValidator.run] --> V[validate]
+    V --> F[list of Finding]
+    F --> VR[ValidationResult]
+```
 
-`DbcValidationEngine` runs enabled checkers from `DbcConfig.rules`:
+## DBC
 
-1. Overlapping signals  
-2. Endianness conflicts  
-3. Missing initial values  
-4. Cycle times (+ optional expected map)  
-5. J1939 compliance  
-6. CAN-FD / classic limits  
+`DbcValidationEngine` runs checkers gated by `dbc.rules.*` in config.  
+Details: [dbc/README.md](dbc/README.md).
 
-## ARXML validator
+## ARXML
 
-`ArxmlPortValidator` checks:
-
-1. Port consistency (duplicate / missing / unresolved interface)  
-2. Interface completeness (empty S/R or C/S)  
-3. Data-type mapping (missing / custom)
+`ArxmlPortValidator` checks ports, empty interfaces, and types.  
+Details: [arxml/README.md](arxml/README.md).
 
 ## Adding a rule
 
-1. Implement `check_*(target) -> list[Finding]` in a new module  
-2. Call it from the engine/validator when the config flag is on  
-3. Document the rule ID in [`../../../docs/VALIDATION_RULES.md`](../../../docs/VALIDATION_RULES.md)  
-4. Add unit tests under `tests/unit/`
+1. Implement `check_*(…) -> list[Finding]`
+2. Wire into the engine/validator + config flag
+3. Document in [VALIDATION_RULES.md](../../../docs/VALIDATION_RULES.md)
+4. Add unit tests
 
-Full rule catalog: [`../../../docs/VALIDATION_RULES.md`](../../../docs/VALIDATION_RULES.md)
+Diagrams: [DIAGRAMS.md](../../../docs/DIAGRAMS.md) §4.

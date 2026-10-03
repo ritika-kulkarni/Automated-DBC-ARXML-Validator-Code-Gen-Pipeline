@@ -1,21 +1,18 @@
 # Models
 
-Pydantic types used after parsing. Keeps cantools/lxml details out of the validators.
-
-## Modules
+Pydantic types used after parsing. Keeps cantools/lxml quirks out of the validators.
 
 | File | Types |
 |------|-------|
-| `findings.py` | `FindingSeverity`, `Finding`, `ValidationResult`, `PipelineReport` |
-| `can_models.py` | `ByteOrder`, `CanSignal`, `CanMessage`, `CanNetwork` |
-| `arxml_models.py` | `PortDirection`, `DataElement`, `Operation`, `ArxmlInterface`, `ArxmlPort`, `ArxmlSoftwareComponent`, `ArxmlModel` |
+| `findings.py` | `Finding`, `ValidationResult`, `PipelineReport` |
+| `can_models.py` | `CanSignal`, `CanMessage`, `CanNetwork` |
+| `arxml_models.py` | ports, interfaces, SWCs, `ArxmlModel` |
 | `requirements.py` | `Requirement`, `RequirementsCatalog` |
 
-## Notable behaviors
+Useful bits:
 
-- `CanSignal.bit_positions()` — Intel consecutive bits; Motorola DBC/SAE layout
-- `CanMessage.pgn` — J1939 PGN derivation from 29-bit ID
-- `Finding.exceeds(threshold)` — used for pipeline fail-on-severity
-- `PipelineReport.to_summary()` — compact status for logs/CI
+- `CanSignal.bit_positions()` — Intel vs Motorola occupancy
+- `CanMessage.pgn` — J1939 PGN from 29-bit ID
+- `Finding.exceeds(threshold)` — fail-on-severity helper
 
-Models are serialized into `pipeline_report.json` via pydantic.
+Class diagram: [ARCHITECTURE.md](../../../docs/ARCHITECTURE.md#data-model-simplified).

@@ -1,31 +1,23 @@
 # Hooks
 
-Git hooks that run the validator before a commit is accepted.
-
 | File | Purpose |
 |------|---------|
 | `pre-commit` | Native bash hook → `auto-validator hook-check` |
 
-## Install (native)
+## Install
 
 ```bash
 cp hooks/pre-commit .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 ```
 
-## Install (framework)
-
-From repo root (uses [`.pre-commit-config.yaml`](../.pre-commit-config.yaml)):
+Or use the repo’s [`.pre-commit-config.yaml`](../.pre-commit-config.yaml):
 
 ```bash
-pip install pre-commit
-pre-commit install
+pip install pre-commit && pre-commit install
 ```
 
-## What gets checked
+Validates staged `.dbc` / `.arxml` (and some requirements files). Does **not** run codegen (kept fast).
 
-Staged files ending in `.dbc`, `.arxml`, and requirements-like `.csv`/`.json`.
-
-Codegen is **not** run in the hook path (kept fast). Use CI or `auto-validator validate` for generation.
-
-Full guide: [`../docs/HOOKS_AND_CI.md`](../docs/HOOKS_AND_CI.md)
+Diagram: [DIAGRAMS.md](../docs/DIAGRAMS.md) §6.  
+Guide: [HOOKS_AND_CI.md](../docs/HOOKS_AND_CI.md).

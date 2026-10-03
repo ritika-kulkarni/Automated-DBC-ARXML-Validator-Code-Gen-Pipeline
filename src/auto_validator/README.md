@@ -1,34 +1,51 @@
 # `auto_validator` package
 
-Python package implementing the Automated DBC/ARXML Validator & Code-Gen Pipeline.
+Python package for the DBC/ARXML validation and codegen CLI.
 
 ## Entry points
 
-| Entry | Module |
-|-------|--------|
-| Console script `auto-validator` | `auto_validator.cli:main` |
+| How | Module |
+|-----|--------|
+| `auto-validator` | `auto_validator.cli:main` |
 | `python -m auto_validator` | `auto_validator.__main__` |
 
-## Subpackages
+## Package map
 
-| Package | Role |
-|---------|------|
-| [`models/`](models/README.md) | Typed domain models (CAN, ARXML, findings, DOORS) |
-| [`parsers/`](parsers/README.md) | DBC (cantools), ARXML (lxml), DOORS (CSV/JSON) |
-| [`validators/`](validators/README.md) | Rule engines for DBC and ARXML |
-| [`requirements/`](requirements/README.md) | Traceability matcher |
-| [`codegen/`](codegen/README.md) | C stubs + RTE maps |
-| [`pipeline/`](pipeline/README.md) | Runs the full validate/codegen flow |
-| [`utils/`](utils/README.md) | Logging, retry, reports |
+```mermaid
+flowchart TB
+    CLI[cli.py] --> PIPE[pipeline/]
+    PIPE --> PAR[parsers/]
+    PIPE --> VAL[validators/]
+    PIPE --> REQ[requirements/]
+    PIPE --> GEN[codegen/]
+    PIPE --> U[utils/]
+    PAR --> M[models/]
+    VAL --> M
+    REQ --> M
+    GEN --> M
+    CFG[config.py] --> PIPE
+```
+
+| Package | Role | README |
+|---------|------|--------|
+| [`models/`](models/README.md) | Typed CAN / ARXML / findings / DOORS types | yes |
+| [`parsers/`](parsers/README.md) | DBC, ARXML, DOORS loaders | yes |
+| [`validators/`](validators/README.md) | Rule engines | yes |
+| [`requirements/`](requirements/README.md) | DOORS matching | yes |
+| [`codegen/`](codegen/README.md) | C stubs + RTE maps | yes |
+| [`pipeline/`](pipeline/README.md) | Stage runner | yes |
+| [`utils/`](utils/README.md) | Logging, retry, reports | yes |
 
 ## Top-level modules
 
 | File | Role |
 |------|------|
-| `cli.py` | Click commands: `validate`, `codegen`, `hook-check` |
-| `config.py` | YAML + pydantic settings |
-| `__init__.py` | Package version |
+| `cli.py` | Click commands |
+| `config.py` | Load YAML → `AppConfig` |
+| `__init__.py` | `__version__` |
 
 ## Docs
 
-Full feature documentation: [`../../docs/FEATURES.md`](../../docs/FEATURES.md)
+- [Architecture](../../docs/ARCHITECTURE.md)
+- [Diagrams](../../docs/DIAGRAMS.md)
+- [Features](../../docs/FEATURES.md)

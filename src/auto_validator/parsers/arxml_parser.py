@@ -1,8 +1,7 @@
-"""Lightweight AUTOSAR ARXML parser (ports, interfaces, SWCs).
+"""Pull SWCs, ports, and interfaces out of AUTOSAR ARXML via lxml.
 
-Uses lxml for namespace-tolerant XPath over AUTOSAR 4.x schemas.
-Does not require EB Tresos — extracts the subset needed for
-port consistency checks and RTE/C stub generation.
+Only the bits we need for port checks and stub generation — not a full
+Tresos/ARXML toolchain.
 """
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""Validation findings and pipeline report models."""
+"""Findings and report types used across the pipeline."""
 
 from __future__ import annotations
 
@@ -10,8 +10,6 @@ from pydantic import BaseModel, Field
 
 
 class FindingSeverity(str, Enum):
-    """Severity levels for validation findings."""
-
     ERROR = "error"
     WARNING = "warning"
     INFO = "info"
@@ -21,13 +19,13 @@ class FindingSeverity(str, Enum):
 
 
 class Finding(BaseModel):
-    """A single validation finding (rule violation or observation)."""
+    """One rule hit (error / warning / info)."""
 
     rule_id: str
     severity: FindingSeverity
     message: str
     file_path: str | None = None
-    location: str | None = None  # e.g. message/signal/port path
+    location: str | None = None  # e.g. MsgName/SignalName
     details: dict[str, Any] = Field(default_factory=dict)
     suggestion: str | None = None
 
@@ -36,7 +34,7 @@ class Finding(BaseModel):
 
 
 class ValidationResult(BaseModel):
-    """Aggregated result from one validator or pipeline stage."""
+    """Result of a single stage (dbc_validation, codegen, ...)."""
 
     stage: str
     passed: bool
@@ -59,7 +57,7 @@ class ValidationResult(BaseModel):
 
 
 class PipelineReport(BaseModel):
-    """End-to-end pipeline execution report."""
+    """Combined report for a full run."""
 
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     finished_at: datetime | None = None

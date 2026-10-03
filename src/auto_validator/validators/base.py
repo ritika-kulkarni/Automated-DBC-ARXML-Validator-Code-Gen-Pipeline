@@ -1,4 +1,4 @@
-"""Abstract validator interface (Strategy + Template Method)."""
+"""Shared base class for validators."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ T = TypeVar("T")
 
 
 class BaseValidator(ABC, Generic[T]):
-    """Template for validators: time execution, collect findings, mark pass/fail."""
+    """Times a validate() call and folds findings into a ValidationResult."""
 
     rule_prefix: str = "BASE"
     stage_name: str = "validate"

@@ -9,10 +9,7 @@ from auto_validator.models.findings import Finding, FindingSeverity
 
 
 def check_endianness_conflicts(network: CanNetwork, source: str | None = None) -> list[Finding]:
-    """
-    Detect messages that mix Intel and Motorola byte order on overlapping
-    byte boundaries — a common source of silent decode bugs in multi-vendor ECUs.
-    """
+    """Warn when a message mixes Intel and Motorola signals."""
     findings: list[Finding] = []
     src = source or (network.source_files[0] if network.source_files else None)
 

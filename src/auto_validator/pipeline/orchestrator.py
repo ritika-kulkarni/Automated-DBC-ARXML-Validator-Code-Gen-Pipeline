@@ -1,4 +1,4 @@
-"""End-to-end pipeline orchestrator (Facade over parsers/validators/codegen)."""
+"""Glue code that runs parse → validate → match → codegen → report."""
 
 from __future__ import annotations
 
@@ -27,16 +27,7 @@ logger = get_logger("pipeline")
 
 
 class PipelineOrchestrator:
-    """
-    Runs the full automation workflow:
-
-    1. Parse DBC / ARXML / DOORS inputs
-    2. Validate DBC rules (overlap, endianness, init, cycle, J1939, CAN-FD)
-    3. Validate ARXML port/interface consistency
-    4. Match against DOORS requirements
-    5. Generate C stubs + RTE mappings (if enabled and prior stages allow)
-    6. Emit reports
-    """
+    """Runs the validation / codegen stages in order and builds one report."""
 
     def __init__(self, config: AppConfig | None = None) -> None:
         self.config = config or load_config()

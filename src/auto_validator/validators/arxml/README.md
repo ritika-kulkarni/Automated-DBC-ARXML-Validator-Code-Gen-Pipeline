@@ -4,5 +4,10 @@
 |--------|-------|-------|
 | `port_consistency.py` | `ArxmlPortValidator` | Ports, interfaces, data types |
 
-Rule IDs: `ARXML.PORT.*`, `ARXML.IFACE.*`, `ARXML.TYPE.*`  
-See [`../../../../docs/VALIDATION_RULES.md`](../../../../docs/VALIDATION_RULES.md).
+| Rule prefix | Examples |
+|-------------|---------|
+| `ARXML.PORT.*` | Duplicate, missing ref, unresolved interface |
+| `ARXML.IFACE.*` | Empty S/R or C/S |
+| `ARXML.TYPE.*` | Missing / custom types |
+
+Full list: [VALIDATION_RULES.md](../../../../docs/VALIDATION_RULES.md).

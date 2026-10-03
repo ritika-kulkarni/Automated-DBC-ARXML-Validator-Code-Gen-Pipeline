@@ -1,15 +1,21 @@
 # DBC validators
 
-Individual CAN / J1939 / CAN-FD rule checkers composed by `DbcValidationEngine`.
+CAN / J1939 / CAN-FD checkers composed by `DbcValidationEngine`.
 
-| Module | Rules |
-|--------|-------|
-| `overlapping_signals.py` | Bit collisions, out-of-bounds |
-| `endianness.py` | Mixed Intel/Motorola |
-| `initial_values.py` | Missing start values |
-| `cycle_times.py` | Missing / invalid / mismatched cycles |
-| `j1939_rules.py` | Extended ID, PGN, SA, length |
-| `can_fd_limits.py` | Classic & FD DLC limits |
-| `engine.py` | Config-driven composite runner |
+| Module | What it flags |
+|--------|----------------|
+| `overlapping_signals.py` | Shared bits, bits past DLC |
+| `endianness.py` | Mixed Intel/Motorola in one message |
+| `initial_values.py` | Missing GenSigStartValue |
+| `cycle_times.py` | Missing / bad / mismatched cycle times |
+| `j1939_rules.py` | Extended ID, PGN, SA, length issues |
+| `can_fd_limits.py` | Classic & FD payload length rules |
+| `engine.py` | Runs the above from config |
 
-Rule IDs: [`../../../../docs/VALIDATION_RULES.md`](../../../../docs/VALIDATION_RULES.md)
+```mermaid
+flowchart LR
+    NET[CanNetwork] --> ENG[engine.py]
+    ENG --> F[Findings]
+```
+
+Rule IDs: [VALIDATION_RULES.md](../../../../docs/VALIDATION_RULES.md).

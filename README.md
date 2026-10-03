@@ -23,6 +23,25 @@ See [docs/FEATURES.md](docs/FEATURES.md) and [docs/VALIDATION_RULES.md](docs/VAL
 
 ---
 
+## How it fits together
+
+```mermaid
+flowchart LR
+    DBC[.dbc] --> ORCH[PipelineOrchestrator]
+    ARXML[.arxml] --> ORCH
+    DOORS[DOORS CSV/JSON] --> ORCH
+    ORCH --> VAL[Validators]
+    ORCH --> MATCH[DOORS match]
+    ORCH --> GEN[Codegen]
+    VAL --> REP[Reports]
+    MATCH --> REP
+    GEN --> STUBS[Rte stubs / maps]
+```
+
+More diagrams: **[docs/DIAGRAMS.md](docs/DIAGRAMS.md)** · architecture notes: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** · first run: **[docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)**
+
+---
+
 ## Install
 
 ```bash
@@ -149,13 +168,20 @@ Reports land under `output/reports/` (`pipeline_report.json`, `pipeline_junit.xm
 
 | Doc | What's in it |
 |-----|----------------|
-| [docs/README.md](docs/README.md) | Index |
+| [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) | Install + first run |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Packages, sequence, failure handling |
+| [docs/DIAGRAMS.md](docs/DIAGRAMS.md) | Mermaid architecture diagrams |
+| [docs/DATA_FLOW.md](docs/DATA_FLOW.md) | Inputs → models → outputs |
 | [docs/FEATURES.md](docs/FEATURES.md) | Feature list |
 | [docs/VALIDATION_RULES.md](docs/VALIDATION_RULES.md) | Rule ids |
 | [docs/CLI.md](docs/CLI.md) | CLI options |
 | [docs/CODEGEN.md](docs/CODEGEN.md) | Generated files |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How it's put together |
+| [docs/CONFIGURATION.md](docs/CONFIGURATION.md) | Config keys |
+| [docs/HOOKS_AND_CI.md](docs/HOOKS_AND_CI.md) | Hooks + CI |
 | [docs/TESTING.md](docs/TESTING.md) | How to test |
+| [docs/README.md](docs/README.md) | Full documentation index |
+
+Package-level READMEs live under `src/auto_validator/*/README.md`, plus `configs/`, `hooks/`, and `tests/`.
 
 ---
 

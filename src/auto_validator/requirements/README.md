@@ -1,25 +1,16 @@
 # Requirements matching
 
-Traceability between DOORS exports and DBC/ARXML artifacts.
-
-## Components
+Compare DOORS exports to DBC signals and ARXML ports.
 
 | Symbol | Role |
 |--------|------|
-| `RequirementsMatchTarget` | Bundle: catalog + optional `CanNetwork` + optional `ArxmlModel` |
-| `RequirementsMatcher` | `BaseValidator` that emits `REQ.*` findings |
-
-## Modes
+| `RequirementsMatchTarget` | catalog + optional network + optional arxml |
+| `RequirementsMatcher` | emits `REQ.*` findings |
 
 | Mode | Behavior |
 |------|----------|
-| `strict` | Exact names; also warns on untraced DBC signals / ARXML ports when the catalog defines coverage |
-| `fuzzy` | Same checks; suggestions via `difflib` using `fuzzy_threshold` |
+| `strict` | Exact names; warn on untraced artifacts when catalog has coverage |
+| `fuzzy` | Same checks + `difflib` suggestions |
 
-## Typical findings
-
-- `REQ.SIGNAL.MISSING_IN_DBC` / `REQ.SIGNAL.UNTRACED`
-- `REQ.PORT.MISSING_IN_ARXML` / `REQ.PORT.UNTRACED`
-
-Config: `requirements.*` in [`../../../configs/default.yaml`](../../../configs/default.yaml)  
-Rules: [`../../../docs/VALIDATION_RULES.md`](../../../docs/VALIDATION_RULES.md)
+Config: `requirements.*` in [configs/default.yaml](../../../configs/default.yaml).  
+Rules: [VALIDATION_RULES.md](../../../docs/VALIDATION_RULES.md).

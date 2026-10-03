@@ -1,164 +1,164 @@
 # Automated DBC/ARXML Validator & Code-Gen Pipeline
 
-Python + Git-hooks CI tool that catches CAN/J1939/CAN-FD DBC defects and AUTOSAR ARXML port mismatches **before** EB Tresos generation or compile time — and auto-generates C RTE stub headers matched against DOORS requirements.
+[![CI](https://github.com/ritika-kulkarni/Automated-DBC-ARXML-Validator-Code-Gen-Pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/ritika-kulkarni/Automated-DBC-ARXML-Validator-Code-Gen-Pipeline/actions/workflows/ci.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Python tool that checks DBC and AUTOSAR ARXML files in git hooks / CI, matches them against DOORS exports, and can generate simple RTE-style C stubs.
+
+Useful when signal packing bugs and port/interface mismatches only show up in Tresos or at compile time today.
 
 ---
 
-## Documentation
+## What it checks
 
-| Document | Description |
-|----------|-------------|
-| **[docs/README.md](docs/README.md)** | Documentation index |
-| **[docs/FEATURES.md](docs/FEATURES.md)** | Every implemented feature, explained |
-| **[docs/VALIDATION_RULES.md](docs/VALIDATION_RULES.md)** | Full rule-ID catalog with remediations |
-| **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)** | YAML / env config reference |
-| **[docs/CLI.md](docs/CLI.md)** | `validate`, `codegen`, `hook-check` |
-| **[docs/CODEGEN.md](docs/CODEGEN.md)** | C stubs & RTE mapping outputs |
-| **[docs/HOOKS_AND_CI.md](docs/HOOKS_AND_CI.md)** | Pre-commit + GitHub Actions |
-| **[docs/TESTING.md](docs/TESTING.md)** | Unit / integration / edge strategy |
-| **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | Layering, SOLID, extension points |
+| Input | Checks / outputs |
+|-------|------------------|
+| **DBC** | Overlapping bits, mixed endianness, missing init values, cycle times, J1939, CAN-FD DLC |
+| **ARXML** | Bad/missing port→interface refs, empty interfaces, missing types |
+| **DOORS CSV/JSON** | Signal and port names that don't line up with DBC/ARXML |
+| **Codegen** | `Rte_<Swc>.h`, `Rte_Type.h`, `rte_interface_map.json`, `Rte_InterfaceMap.c` |
 
-### Package & folder READMEs
-
-| Path | Focus |
-|------|-------|
-| [src/auto_validator/README.md](src/auto_validator/README.md) | Package map |
-| [src/auto_validator/parsers/README.md](src/auto_validator/parsers/README.md) | DBC / ARXML / DOORS parsers |
-| [src/auto_validator/validators/README.md](src/auto_validator/validators/README.md) | Validation engines |
-| [src/auto_validator/codegen/README.md](src/auto_validator/codegen/README.md) | Code generators |
-| [src/auto_validator/requirements/README.md](src/auto_validator/requirements/README.md) | DOORS matcher |
-| [src/auto_validator/pipeline/README.md](src/auto_validator/pipeline/README.md) | Orchestrator |
-| [src/auto_validator/models/README.md](src/auto_validator/models/README.md) | Domain models |
-| [src/auto_validator/utils/README.md](src/auto_validator/utils/README.md) | Logging, retry, reports |
-| [configs/README.md](configs/README.md) | Config files |
-| [hooks/README.md](hooks/README.md) | Git hooks |
-| [tests/README.md](tests/README.md) | Test suite |
+See [docs/FEATURES.md](docs/FEATURES.md) and [docs/VALIDATION_RULES.md](docs/VALIDATION_RULES.md) for the full list.
 
 ---
 
-## Why this exists
-
-Manual DBC signal mapping and ARXML port mismatches are typically found late (Tresos / compiler). This pipeline shifts those checks left into pre-commit and CI.
-
-| Stage | What it catches / produces |
-|-------|----------------------------|
-| **DBC validation** | Overlapping bit-starts, endianness conflicts, missing initial values, cycle-time mismatches, J1939 rules, CAN-FD DLC limits |
-| **ARXML validation** | Unresolved port→interface refs, empty S/R or C/S interfaces, data-type gaps |
-| **Requirements match** | DOORS CSV/JSON signals & ports vs DBC/ARXML (strict or fuzzy) |
-| **Code-gen** | `Rte_<Swc>.h`, `Rte_Type.h`, `rte_interface_map.json`, `Rte_InterfaceMap.c` |
-| **Reporting** | Rich console, JSON, JUnit XML |
-| **Reliability** | Structured logging, I/O retries, findings instead of hard crashes |
-
----
-
-## Architecture (summary)
-
-```text
-src/auto_validator/
-├── cli.py                 # Click CLI
-├── config.py              # YAML + pydantic
-├── models/                # Domain models
-├── parsers/               # DBC, ARXML, DOORS
-├── validators/dbc|arxml/  # Rule engines
-├── requirements/          # Traceability matcher
-├── codegen/               # C stubs + RTE maps
-├── pipeline/              # Orchestrator (Facade)
-└── utils/                 # Logging, retry, reports
-```
-
-Design patterns: Strategy (pluggable validators), Template Method (`BaseValidator.run`), Facade (`PipelineOrchestrator`). Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
----
-
-## Quick start
+## Install
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
+git clone https://github.com/ritika-kulkarni/Automated-DBC-ARXML-Validator-Code-Gen-Pipeline.git
+cd Automated-DBC-ARXML-Validator-Code-Gen-Pipeline
 
-# End-to-end on fixtures
+python3 -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+Needs Python 3.9+.
+
+---
+
+## Usage
+
+```bash
+# Full run (fixtures included in the repo)
 auto-validator validate \
   --dbc tests/fixtures/dbc/valid_can.dbc \
   --arxml tests/fixtures/arxml/valid_swc.arxml \
   --requirements tests/fixtures/doors/requirements.csv
 
-# Codegen only
+# Stubs only
 auto-validator codegen \
   --arxml tests/fixtures/arxml/valid_swc.arxml \
   --output output/codegen
 
-# Tests
-pytest
+# Expect failure (overlapping signals)
+auto-validator validate \
+  --dbc tests/fixtures/dbc/invalid_overlap.dbc \
+  --skip-codegen
 ```
 
-Exit code `0` = passed (per `pipeline.fail_on_severity`), `1` = failed.
+Exit `0` = ok, `1` = failed (threshold set by `pipeline.fail_on_severity`).
 
-More CLI examples: [docs/CLI.md](docs/CLI.md).
+| Command | When to use |
+|---------|-------------|
+| `validate` | Normal pipeline |
+| `codegen` | ARXML → headers/maps only |
+| `hook-check` | Called from the git hook on staged files |
 
----
-
-## Configuration
-
-Default: [`configs/default.yaml`](configs/default.yaml). Override with `--config` or env prefix `AUTO_VALIDATOR_`.
-
-Key knobs:
-
-- `dbc.rules.*` — enable/disable individual DBC checks  
-- `dbc.require_initial_values` — missing `GenSigStartValue` → error  
-- `arxml.generate_c_stubs` / `generate_rte_mappings`  
-- `requirements.match_mode`: `strict` \| `fuzzy`  
-- `pipeline.fail_on_severity`: `error` \| `warning` \| `info`  
-
-Full reference: [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
+More detail: [docs/CLI.md](docs/CLI.md).
 
 ---
 
-## Git hooks
+## Repo layout
+
+```text
+configs/default.yaml     rule toggles + report paths
+docs/                    longer docs
+hooks/pre-commit         native git hook
+src/auto_validator/
+  parsers/               DBC, ARXML, DOORS
+  validators/            rule checks
+  requirements/          DOORS matching
+  codegen/               C stubs / RTE maps
+  pipeline/              runs the stages
+tests/                   unit + integration + fixtures
+```
+
+---
+
+## Config
+
+Defaults live in [`configs/default.yaml`](configs/default.yaml). Pass another file with `--config`, or use `AUTO_VALIDATOR_` env vars.
+
+```yaml
+pipeline:
+  fail_on_severity: error
+
+dbc:
+  rules:
+    overlapping_signals: true
+    missing_initial_values: true
+    j1939_compliance: true
+    can_fd_limits: true
+
+arxml:
+  generate_c_stubs: true
+  output_dir: output/codegen
+
+requirements:
+  match_mode: strict   # or fuzzy
+
+report:
+  formats: [console, json, junit]
+```
+
+Full key list: [docs/CONFIGURATION.md](docs/CONFIGURATION.md).
+
+---
+
+## Git hook
 
 ```bash
-# Native
-cp hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+cp hooks/pre-commit .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
 
-# Or pre-commit framework
+# or
 pip install pre-commit && pre-commit install
 ```
 
-See [hooks/README.md](hooks/README.md) and [docs/HOOKS_AND_CI.md](docs/HOOKS_AND_CI.md).
+Staged `.dbc` / `.arxml` files get validated before the commit goes through. Notes: [docs/HOOKS_AND_CI.md](docs/HOOKS_AND_CI.md).
 
 ---
 
-## CI
+## CI & tests
 
-GitHub Actions: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+GitHub Actions (`.github/workflows/ci.yml`) runs pytest + ruff on Python 3.9–3.12 and smokes the fixtures.
 
-- Python 3.9–3.12 matrix: pytest, ruff, mypy  
-- Fixture smoke: known-good must pass; overlapping DBC must fail  
+```bash
+pytest
+pytest -m unit
+pytest -m integration
+```
 
----
-
-## Reports
-
-Written to `output/reports/` (configurable):
-
-- `pipeline_report.json` — structured findings  
-- `pipeline_junit.xml` — CI reporters  
-- Rich console table on stderr  
-
-Rule IDs explained in [docs/VALIDATION_RULES.md](docs/VALIDATION_RULES.md).
+Reports land under `output/reports/` (`pipeline_report.json`, `pipeline_junit.xml`).
 
 ---
 
-## Typical ECU-repo workflow
+## Docs
 
-1. Engineer edits `Network.dbc` / `Swc.arxml`  
-2. Pre-commit runs DBC + ARXML rules → blocks overlapping bits / bad ports  
-3. CI re-runs validation (+ optional codegen)  
-4. DOORS export matched so untraced signals/ports surface as warnings/errors  
-5. Generated headers used for interface review / compile checks  
+| Doc | What's in it |
+|-----|----------------|
+| [docs/README.md](docs/README.md) | Index |
+| [docs/FEATURES.md](docs/FEATURES.md) | Feature list |
+| [docs/VALIDATION_RULES.md](docs/VALIDATION_RULES.md) | Rule ids |
+| [docs/CLI.md](docs/CLI.md) | CLI options |
+| [docs/CODEGEN.md](docs/CODEGEN.md) | Generated files |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | How it's put together |
+| [docs/TESTING.md](docs/TESTING.md) | How to test |
 
 ---
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+[MIT](LICENSE)

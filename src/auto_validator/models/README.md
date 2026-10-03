@@ -1,6 +1,6 @@
 # Models
 
-Pydantic domain models — the anti-corruption layer between external formats (DBC/ARXML/CSV) and validators/codegen.
+Pydantic types used after parsing. Keeps cantools/lxml details out of the validators.
 
 ## Modules
 

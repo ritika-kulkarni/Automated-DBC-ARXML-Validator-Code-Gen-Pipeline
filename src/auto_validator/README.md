@@ -18,7 +18,7 @@ Python package implementing the Automated DBC/ARXML Validator & Code-Gen Pipelin
 | [`validators/`](validators/README.md) | Rule engines for DBC and ARXML |
 | [`requirements/`](requirements/README.md) | Traceability matcher |
 | [`codegen/`](codegen/README.md) | C stubs + RTE maps |
-| [`pipeline/`](pipeline/README.md) | End-to-end orchestrator |
+| [`pipeline/`](pipeline/README.md) | Runs the full validate/codegen flow |
 | [`utils/`](utils/README.md) | Logging, retry, reports |
 
 ## Top-level modules

@@ -1,6 +1,6 @@
-# Testing Strategy
+# Testing
 
-The suite covers **unit**, **integration**, and **edge** cases with pytest markers and a coverage gate (≥ 80%).
+Unit, integration, and a few edge cases. Coverage gate is 80% (`pyproject.toml`).
 
 ---
 

@@ -11,7 +11,7 @@ Complete documentation for the **Automated DBC/ARXML Validator & Code-Gen Pipeli
 | [CODEGEN.md](CODEGEN.md) | C stub headers and RTE mapping generation |
 | [HOOKS_AND_CI.md](HOOKS_AND_CI.md) | Git pre-commit hooks and GitHub Actions CI |
 | [TESTING.md](TESTING.md) | Unit, integration, edge-case strategy and how to run tests |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Layering, SOLID mapping, extension points |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | How the packages fit together |
 
 ## Package READMEs
 
@@ -31,7 +31,7 @@ Complete documentation for the **Automated DBC/ARXML Validator & Code-Gen Pipeli
 | [`../hooks/README.md`](../hooks/README.md) | Native git hooks |
 | [`../tests/README.md`](../tests/README.md) | Test suite |
 | [`../tests/fixtures/README.md`](../tests/fixtures/README.md) | Fixture catalog |
-| [`../.github/README.md`](../.github/README.md) | CI workflow pointer |
+| [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml) | GitHub Actions CI workflow |
 
 ## Quick links
 

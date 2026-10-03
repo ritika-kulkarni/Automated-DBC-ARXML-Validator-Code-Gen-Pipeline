@@ -27,7 +27,7 @@ class RequirementsMatchTarget:
 
 
 class RequirementsMatcher(BaseValidator[RequirementsMatchTarget]):
-    """Traceability: every DOORS-mapped signal/port must exist, and vice versa (strict)."""
+    """Compare DOORS signal/port names against DBC and ARXML."""
 
     rule_prefix = "REQ"
     stage_name = "requirements_match"

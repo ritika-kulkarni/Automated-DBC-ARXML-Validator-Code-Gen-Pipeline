@@ -1,6 +1,6 @@
 # Pipeline
 
-Facade that wires parsers → validators → matcher → codegen → reports.
+Wires parsers → validators → matcher → codegen → reports.
 
 ## `PipelineOrchestrator`
 

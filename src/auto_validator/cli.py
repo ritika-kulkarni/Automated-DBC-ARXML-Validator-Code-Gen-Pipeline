@@ -1,4 +1,4 @@
-"""Click CLI entrypoint for the DBC/ARXML validation pipeline."""
+"""CLI entrypoints: validate, codegen, hook-check."""
 
 from __future__ import annotations
 

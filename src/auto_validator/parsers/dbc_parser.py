@@ -1,4 +1,4 @@
-"""DBC parsing via cantools → normalized CanNetwork models."""
+"""Load DBC files with cantools into CanNetwork models."""
 
 from __future__ import annotations
 

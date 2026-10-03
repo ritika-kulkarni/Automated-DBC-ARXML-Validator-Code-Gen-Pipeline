@@ -1,15 +1,15 @@
 # Feature Reference
 
-This document explains **every feature** implemented in the Automated DBC/ARXML Validator & Code-Gen Pipeline.
+What's in the tool, keyed to the modules that implement it.
 
 ---
 
-## 1. End-to-end pipeline orchestration
+## 1. Pipeline runner
 
 **Where:** `src/auto_validator/pipeline/orchestrator.py`  
 **CLI:** `auto-validator validate`
 
-The `PipelineOrchestrator` runs a fixed, auditable sequence:
+Stages, in order:
 
 1. **Parse** DBC / ARXML / DOORS inputs (optional per stage)
 2. **Validate** DBC rules (J1939 / CAN-FD / classic CAN)

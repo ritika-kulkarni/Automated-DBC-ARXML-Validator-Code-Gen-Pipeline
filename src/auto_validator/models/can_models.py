@@ -53,13 +53,7 @@ class CanSignal(BaseModel):
         return v
 
     def bit_positions(self) -> set[int]:
-        """
-        Return absolute bit indices occupied by this signal.
-
-        Uses DBC bit numbering:
-        - little_endian (Intel): consecutive ascending bits from start_bit
-        - big_endian (Motorola): SAE J1939 / DBC Motorola layout
-        """
+        """Bits this signal occupies (Intel = linear; Motorola = DBC layout)."""
         if self.byte_order == ByteOrder.LITTLE_ENDIAN:
             return set(range(self.start_bit, self.start_bit + self.length))
 

@@ -1,4 +1,4 @@
-"""Composite DBC validation engine — runs enabled rules."""
+"""Runs the configured DBC checks and returns one finding list."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from auto_validator.validators.dbc.overlapping_signals import check_overlapping_
 
 
 class DbcValidationEngine(BaseValidator[CanNetwork]):
-    """Orchestrates all DBC / J1939 / CAN-FD rule checks."""
+    """DBC / J1939 / CAN-FD checks controlled by DbcConfig.rules."""
 
     rule_prefix = "DBC"
     stage_name = "dbc_validation"

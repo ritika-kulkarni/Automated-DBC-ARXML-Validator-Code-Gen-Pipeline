@@ -15,11 +15,7 @@ def check_cycle_times(
     expected_cycle_times: dict[str, int] | None = None,
     source: str | None = None,
 ) -> list[Finding]:
-    """
-    - Flag messages with missing GenMsgCycleTime
-    - Flag duplicate frame IDs with differing cycle times
-    - Optionally compare against expected map (from requirements / OEM matrix)
-    """
+    """Check GenMsgCycleTime presence, validity, and optional expected values."""
     findings: list[Finding] = []
     src = source or (network.source_files[0] if network.source_files else None)
     expected_cycle_times = expected_cycle_times or {}
